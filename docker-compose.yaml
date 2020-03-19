@@ -5,9 +5,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      #container_name: upf
+    container_name: upf1
     command: | 
         /bin/bash -c "
+        iptables -t nat -I POSTROUTING -s 60.60.0.0/24 -o servicenet -j MASQUERADE
         /dynamicpath/bin/monitor -h 10.200.200.101:8888 -eth0 rx=200,tx=200 &
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upfcfg.yaml
         "
@@ -27,6 +28,8 @@ services:
     networks:
       privnet:
         ipv4_address: 10.200.200.101
+      servicenet:
+        ipv4_address: 60.60.1.101
 
   db:
     image: mongo
@@ -205,6 +208,41 @@ services:
       - db
     depends_on:
       - free5gc-nrf
+  radio-simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile_Radio
+    container_name: simulator
+    command: | 
+        /bin/bash -c "
+        sleep 0.5
+        /radio_simulator/run_in_docker.sh 60.60.1.0/24
+        "
+    privileged: true
+    volumes:
+      - "./config_radio:/radio_simulator/config"
+      - "./radio_simulator:/radio_simulator"
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
+    networks:
+      privnet:
+        ipv4_address: 10.200.200.100
+    depends_on:
+      - free5gc-amf
+
+        #service-iperf3:
+        #build:
+        #context: .
+        #dockerfile: Dockerfile_service
+        #container_name: iperf3
+        #expose:
+        #- "5201"
+        #networks:
+        #servicenet:
+        #ipv4_address: 60.60.1.1
+        #tty: true
 
 networks:
   privnet:
@@ -213,3 +251,9 @@ networks:
       config:
         - subnet: 10.200.200.0/24
           gateway: 10.200.200.254
+  servicenet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 60.60.1.0/24
+          gateway: 60.60.1.254

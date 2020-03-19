@@ -4,3 +4,6 @@
 [submodule "dynamicpath"]
 	path = dynamicpath
 	url = git@bitbucket.org:weiting0912/dynamicpath.git
+[submodule "radio_simulator"]
+	path = radio_simulator
+	url = git@bitbucket.org:weiting0912/radio_simulator.git
