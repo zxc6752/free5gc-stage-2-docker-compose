@@ -6,19 +6,24 @@ services:
       context: .
       dockerfile: Dockerfile
       #container_name: upf
-    command: |
-      /bin/bash -c "
-        cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
-        ./bin/free5gc-upfd -f /config/upfcfg.yaml
-      "
+    command: | 
+        /bin/bash -c "
+        /dynamicpath/bin/monitor -h 10.200.200.101:8888 -eth0 rx=200,tx=200 &
+        /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upfcfg.yaml
+        "
     privileged: true
     volumes:
       - "./gofree5gc:/gofree5gc"
       - "./config:/config"
+      - "./dynamicpath:/dynamicpath"
     cap_add:
       - NET_ADMIN
     devices:
       - "/dev/net/tun:/dev/net/tun"
+    expose:
+      - "2152"
+      - "8805"
+      - "8888"
     networks:
       privnet:
         ipv4_address: 10.200.200.101
@@ -40,13 +45,13 @@ services:
     container_name: nrf
     command: |
       /bin/bash -c "
-      go run /gofree5gc/src/nrf/nrf.go -nrfcfg /config/nrfcfg.conf
+      ./bin/nrf
       "
     expose:
       - "29510"
     volumes:
       - "./gofree5gc:/gofree5gc"
-      - "./config:/config"
+      - "./config:/gofree5gc/config"
     environment:
       DB_URI: mongodb://db/free5gc
     networks:
@@ -62,13 +67,13 @@ services:
     container_name: amf
     command: |
       /bin/bash -c "
-      go run /gofree5gc/src/amf/amf.go -amfcfg /config/amfcfg.conf
+      ./bin/amf
       "
     expose:
       - "29518"
     volumes:
       - "./gofree5gc:/gofree5gc"
-      - "./config:/config"
+      - "./config:/gofree5gc/config"
     networks:
       privnet:
         ipv4_address: 10.200.200.3
@@ -82,13 +87,13 @@ services:
     container_name: ausf
     command: |
       /bin/bash -c "
-      go run /gofree5gc/src/ausf/ausf.go -ausfcfg /config/ausfcfg.conf
+      ./bin/ausf
       "
     expose:
       - "29509"
     volumes:
       - "./gofree5gc:/gofree5gc"
-      - "./config:/config"
+      - "./config:/gofree5gc/config"
     networks:
       privnet:
         ipv4_address: 10.200.200.4
@@ -102,13 +107,13 @@ services:
     container_name: nssf
     command: |
       /bin/bash -c "
-      go run /gofree5gc/src/nssf/nssf.go -nssfcfg /config/nssfcfg.conf
+      ./bin/nssf
       "
     expose:
       - "29531"
     volumes:
       - "./gofree5gc:/gofree5gc"
-      - "./config:/config"
+      - "./config:/gofree5gc/config"
     networks:
       privnet:
         ipv4_address: 10.200.200.5
@@ -122,13 +127,13 @@ services:
     container_name: pcf
     command: |
       /bin/bash -c "
-      go run /gofree5gc/src/pcf/pcf.go -pcfcfg /config/pcfcfg.conf
+      ./bin/pcf
       "
     expose:
       - "29507"
     volumes:
       - "./gofree5gc:/gofree5gc"
-      - "./config:/config"
+      - "./config:/gofree5gc/config"
     networks:
       privnet:
         ipv4_address: 10.200.200.6
@@ -142,9 +147,10 @@ services:
     container_name: smf
     command: |
       /bin/bash -c "
-      go run /gofree5gc/src/smf/smf.go -smfcfg /config/smf.cfg.conf -uerouting /config/uerouting.yaml
+      ./bin/smf -smfcfg /config/smfcfg.conf
       "
     expose:
+      - "38413"
       - "29502"
     volumes:
       - "./gofree5gc:/gofree5gc"
@@ -163,13 +169,13 @@ services:
     container_name: udm
     command: |
       /bin/bash -c "
-      go run /gofree5gc/src/udm/udm.go -udmcfg /config/udmcfg.conf
+      ./bin/udm
       "
     expose:
       - "29503"
     volumes:
       - "./gofree5gc:/gofree5gc"
-      - "./config:/config"
+      - "./config:/gofree5gc/config"
     networks:
       privnet:
         ipv4_address: 10.200.200.8
@@ -183,13 +189,13 @@ services:
     container_name: udr
     command: |
       /bin/bash -c "
-      go run /gofree5gc/src/udr/udr.go -udrcfg /config/udrcfg.conf
+      ./bin/udr
       "
     expose:
       - "29504"
     volumes:
       - "./gofree5gc:/gofree5gc"
-      - "./config:/config"
+      - "./config:/gofree5gc/config"
     environment:
       DB_URI: mongodb://db/free5gc
     networks:
