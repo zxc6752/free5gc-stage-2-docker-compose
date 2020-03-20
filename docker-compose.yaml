@@ -8,7 +8,7 @@ services:
     container_name: upf1
     command: | 
         /bin/bash -c "
-        iptables -t nat -I POSTROUTING -s 60.60.0.0/24 -o servicenet -j MASQUERADE
+        iptables -t nat -I POSTROUTING -o eth1 -j MASQUERADE
         /dynamicpath/bin/monitor -h 10.200.200.101:8888 -eth0 rx=200,tx=200 &
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upfcfg.yaml
         "
@@ -19,6 +19,7 @@ services:
       - "./dynamicpath:/dynamicpath"
     cap_add:
       - NET_ADMIN
+      - NET_RAW
     devices:
       - "/dev/net/tun:/dev/net/tun"
     expose:
@@ -214,14 +215,14 @@ services:
       dockerfile: Dockerfile_Radio
     container_name: simulator
     command: | 
-        /bin/bash -c "
-        sleep 0.5
-        /radio_simulator/run_in_docker.sh 60.60.1.0/24
-        "
+       /bin/bash -c "
+       cd /radio_simulator/lib/linux_kernel_gtp && ./build.sh
+       cd /radio_simulator && ./run_in_docker.sh 60.60.1.0/24
+       "
     privileged: true
     volumes:
-      - "./config_radio:/radio_simulator/config"
       - "./radio_simulator:/radio_simulator"
+      - "./config_radio:/radio_simulator/config"
     cap_add:
       - NET_ADMIN
     devices:
@@ -231,7 +232,7 @@ services:
         ipv4_address: 10.200.200.100
     depends_on:
       - free5gc-amf
-
+    tty: true
         #service-iperf3:
         #build:
         #context: .
