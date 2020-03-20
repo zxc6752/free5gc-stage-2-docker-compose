@@ -9,7 +9,7 @@ services:
     command: | 
         /bin/bash -c "
         iptables -t nat -I POSTROUTING -o eth1 -j MASQUERADE
-        /dynamicpath/bin/monitor -h 10.200.200.101:8888 -eth0 rx=200,tx=200 &
+        /dynamicpath/bin/monitor -h 10.200.200.101:8888 -eth0 rx=200,tx=200 -eth1 rx=1000,tx=1000 &
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upfcfg.yaml
         "
     privileged: true
@@ -151,6 +151,7 @@ services:
     container_name: smf
     command: |
       /bin/bash -c "
+      sleep 0.1
       ./bin/smf -smfcfg /config/smfcfg.conf
       "
     expose:
@@ -165,6 +166,7 @@ services:
     depends_on:
       - free5gc-nrf
       - free5gc-upf
+      - load-balancer
 
   free5gc-udm:
     build:
@@ -209,6 +211,27 @@ services:
       - db
     depends_on:
       - free5gc-nrf
+
+  load-balancer:
+    build:
+      context: .
+      dockerfile: Dockerfile_Balancer
+    container_name: balancer
+    command: | 
+        /bin/bash -c "
+        /dynamicpath/bin/balancer -lbcfg /config/lbcfg.conf
+        "
+    volumes:
+      - "./config_balancer:/config"
+      - "./dynamicpath:/dynamicpath"
+    expose:
+      - "9487"
+    networks:
+      privnet:
+        ipv4_address: 10.200.200.10
+    depends_on:
+      - free5gc-upf
+
   radio-simulator:
     build:
       context: .
@@ -232,7 +255,7 @@ services:
         ipv4_address: 10.200.200.100
     depends_on:
       - free5gc-amf
-    tty: true
+    # tty: true
         #service-iperf3:
         #build:
         #context: .

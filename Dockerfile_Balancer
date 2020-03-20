@@ -1,0 +1,12 @@
+From golang:latest
+ENV GO111MODULE=on
+ENV GOPATH="/:${GOPATH}"
+WORKDIR /load_balancer
+
+MAINTAINER Weiting Hu <zxc6752@gmail.com>
+
+RUN apt-get update
+RUN apt-get -y install libtool pkg-config libyaml-dev netcat tcpdump
+
+RUN apt-get clean
+
