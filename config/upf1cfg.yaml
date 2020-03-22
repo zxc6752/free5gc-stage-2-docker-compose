@@ -20,4 +20,4 @@ configuration:
     - apn: internet
       cidr: 60.60.0.0/24
       # [optional] apn_list[*].natifname
-      # natifname: eth0
+      natifname: eth1

@@ -1,16 +1,17 @@
 version: '2'
 
 services:
-  free5gc-upf:
+  free5gc-upf1:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: upf1
     command: | 
         /bin/bash -c "
+        #cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
         iptables -t nat -I POSTROUTING -o eth1 -j MASQUERADE
         /dynamicpath/bin/monitor -h 10.200.200.101:8888 -eth0 rx=200,tx=200 -eth1 rx=1000,tx=1000 &
-        /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upfcfg.yaml
+        /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf1cfg.yaml
         "
     privileged: true
     volumes:
@@ -31,6 +32,37 @@ services:
         ipv4_address: 10.200.200.101
       servicenet:
         ipv4_address: 60.60.1.101
+  free5gc-upf2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: upf2
+    command: | 
+        /bin/bash -c "
+        #cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
+        iptables -t nat -I POSTROUTING -o eth1 -j MASQUERADE
+        /dynamicpath/bin/monitor -h 10.200.200.102:8888 -eth0 rx=200,tx=200 -eth1 rx=1000,tx=1000 &
+        /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf2cfg.yaml
+        "
+    privileged: true
+    volumes:
+      - "./gofree5gc:/gofree5gc"
+      - "./config:/config"
+      - "./dynamicpath:/dynamicpath"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
+    expose:
+      - "2152"
+      - "8805"
+      - "8888"
+    networks:
+      privnet:
+        ipv4_address: 10.200.200.102
+      servicenet:
+        ipv4_address: 60.60.1.102
 
   db:
     image: mongo
@@ -165,7 +197,7 @@ services:
         ipv4_address: 10.200.200.7
     depends_on:
       - free5gc-nrf
-      - free5gc-upf
+      - free5gc-upf1
       - load-balancer
 
   free5gc-udm:
@@ -230,7 +262,8 @@ services:
       privnet:
         ipv4_address: 10.200.200.10
     depends_on:
-      - free5gc-upf
+      - free5gc-upf1
+      - free5gc-upf2
 
   radio-simulator:
     build:
@@ -239,7 +272,7 @@ services:
     container_name: simulator
     command: | 
        /bin/bash -c "
-       cd /radio_simulator/lib/linux_kernel_gtp && ./build.sh
+       #cd /radio_simulator/lib/linux_kernel_gtp && ./build.sh
        cd /radio_simulator && ./run_in_docker.sh 60.60.1.0/24
        "
     privileged: true
