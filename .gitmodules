@@ -1,6 +1,6 @@
 [submodule "gofree5gc"]
 	path = gofree5gc
-	url = git@bitbucket.org:free5gc-team/gofree5gc.git
+	url = git@bitbucket.org:weiting0912/gofree5gc_lb.git
 [submodule "dynamicpath"]
 	path = dynamicpath
 	url = git@bitbucket.org:weiting0912/dynamicpath.git
