@@ -272,7 +272,7 @@ services:
     container_name: simulator
     command: | 
        /bin/bash -c "
-       #cd /radio_simulator/lib/linux_kernel_gtp && ./build.sh
+       cd /radio_simulator/lib/linux_kernel_gtp/libgtp5gnl && autoreconf -iv && ./configure --prefix=`pwd` && make -j`nproc`
        cd /radio_simulator && ./run_in_docker.sh 60.60.1.0/24
        "
     privileged: true
