@@ -39,9 +39,9 @@ services:
     container_name: upf2
     command: | 
         /bin/bash -c "
-        #cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
-        iptables -t nat -I POSTROUTING -o eth1 -j MASQUERADE
-        /dynamicpath/bin/monitor -h 10.200.200.102:8888 -eth0 rx=200,tx=200 -eth1 rx=1000,tx=1000 &
+        # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
+        # iptables -t nat -I POSTROUTING -o eth1 -j MASQUERADE
+        /dynamicpath/bin/monitor -h 10.200.200.102:8888 -eth0 rx=200,tx=200 &
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf2cfg.yaml
         "
     privileged: true
@@ -61,8 +61,8 @@ services:
     networks:
       privnet:
         ipv4_address: 10.200.200.102
-      servicenet:
-        ipv4_address: 60.60.1.102
+      # servicenet:
+      #   ipv4_address: 60.60.1.102
 
   db:
     image: mongo
