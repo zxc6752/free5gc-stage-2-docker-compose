@@ -8,9 +8,10 @@ services:
     container_name: upf1
     command: | 
         /bin/bash -c "
+        ip route change default via 60.60.1.254 dev eth1
         #cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
         iptables -t nat -I POSTROUTING -o eth1 -j MASQUERADE
-        /dynamicpath/bin/monitor -h 10.200.200.101:8888 -eth0 rx=200,tx=200 -eth1 rx=1000,tx=1000 &
+        /dynamicpath/bin/monitor -h 10.200.200.101:8888 -eth0 rx=100,tx=100 &
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf1cfg.yaml
         "
     privileged: true
@@ -197,7 +198,6 @@ services:
         ipv4_address: 10.200.200.7
     depends_on:
       - free5gc-nrf
-      - free5gc-upf1
       - load-balancer
 
   free5gc-udm:
@@ -273,7 +273,7 @@ services:
     command: | 
        /bin/bash -c "
        cd /radio_simulator/lib/linux_kernel_gtp/libgtp5gnl && autoreconf -iv && ./configure --prefix=`pwd` && make -j`nproc`
-       cd /radio_simulator && ./run_in_docker.sh 60.60.1.0/24
+       cd /radio_simulator && ./run_in_docker.sh 60.60.2.0/24
        "
     privileged: true
     volumes:

@@ -2,10 +2,10 @@
 
 exe() { echo "\$ $@" ; "$@" ; }
 
-UPF_TX_LIST=(100)
-UPF_RX_LIST=(100)
-UPF_DELAY_LIST=(1ms) 
-UPF_LOSS_LIST=(5%)
+UPF_TX_LIST=(100 200)
+UPF_RX_LIST=(100 200)
+UPF_DELAY_LIST=(1ms 3ms) 
+UPF_LOSS_LIST=(5% 10%)
 UPF_VETH_LIST=()
 UPF_NAME_LIST=()
 
