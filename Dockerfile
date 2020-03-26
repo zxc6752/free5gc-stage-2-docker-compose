@@ -6,7 +6,7 @@ WORKDIR /gofree5gc
 MAINTAINER Chia-An Lee <calee@cs.nctu.edu.tw>
 
 RUN apt-get update
-RUN apt-get -y install gcc cmake autoconf libtool pkg-config libmnl-dev libyaml-dev netcat tcpdump iptables
+RUN apt-get -y install gcc cmake autoconf libtool pkg-config libmnl-dev libyaml-dev netcat tcpdump iptables iperf3
 
 RUN go get -u -v "github.com/sirupsen/logrus"
 

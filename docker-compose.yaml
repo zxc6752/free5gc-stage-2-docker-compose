@@ -9,7 +9,7 @@ services:
     command: | 
         /bin/bash -c "
         ip route change default via 60.60.1.254 dev eth1
-        #cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
+        # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
         iptables -t nat -I POSTROUTING -o eth1 -j MASQUERADE
         /dynamicpath/bin/monitor -h 10.200.200.101:8888 -eth0 rx=100,tx=100 &
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf1cfg.yaml
@@ -310,8 +310,6 @@ networks:
           gateway: 10.200.200.254
   servicenet:
     driver: bridge
-    driver_opts:
-      com.docker.network.bridge.enable_ip_masquerade: 'false'
     ipam:
       config:
         - subnet: 60.60.1.0/24
