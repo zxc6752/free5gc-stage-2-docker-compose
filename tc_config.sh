@@ -5,8 +5,6 @@ UPF_TX_LIST=(100 200)
 UPF_RX_LIST=(100 200)
 UPF_DELAY_LIST=(1ms 3ms) 
 UPF_LOSS_LIST=(5% 10%)
-UPF_IP_INDEX=(101 102)
-UPF_SUBNET="10.200.200"
 
 echo "Modify limit_docker_upf_traffic.sh for tc rule"
 
@@ -19,6 +17,6 @@ line_num=($(grep -n "/dynamicpath/bin/monitor -h" docker-compose.yaml | head -n 
 
 echo "Modify docker-compose.yaml for tc rule"
 for index in ${!UPF_TX_LIST[@]}; do
-    replace="        \/dynamicpath\/bin\/monitor -h ${UPF_SUBNET}.${UPF_IP_INDEX[$index]}:8888 -eth0 rx=${UPF_RX_LIST[$index]},tx=${UPF_TX_LIST[$index]} \&"
+    replace="        \/dynamicpath\/bin\/monitor -h upf$(($index+1)):8888 -eth1 rx=${UPF_RX_LIST[$index]},tx=${UPF_TX_LIST[$index]} \&"
     sed -i "${line_num[$index]}s/.*/$replace/" docker-compose.yaml
 done

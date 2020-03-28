@@ -8,10 +8,10 @@ services:
     container_name: upf1
     command: | 
         /bin/bash -c "
-        ip route change default via 60.60.1.254 dev eth1
+        ip route change default via 60.60.1.254 dev eth2
         # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
-        iptables -t nat -I POSTROUTING -o eth1 -j MASQUERADE
-        /dynamicpath/bin/monitor -h 10.200.200.101:8888 -eth0 rx=100,tx=100 &
+        iptables -t nat -I POSTROUTING -o eth2 -j MASQUERADE
+        /dynamicpath/bin/monitor -h upf1:8888 -eth1 rx=100,tx=100 &
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf1cfg.yaml
         "
     privileged: true
@@ -29,9 +29,11 @@ services:
       - "8805"
       - "8888"
     networks:
-      privnet:
+      1_cpnet:
         ipv4_address: 10.200.200.101
-      servicenet:
+      2_upnet:
+        ipv4_address: 10.200.201.101
+      3_servicenet:
         ipv4_address: 60.60.1.101
   free5gc-upf2:
     build:
@@ -41,8 +43,7 @@ services:
     command: | 
         /bin/bash -c "
         # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
-        # iptables -t nat -I POSTROUTING -o eth1 -j MASQUERADE
-        /dynamicpath/bin/monitor -h 10.200.200.102:8888 -eth0 rx=200,tx=200 &
+        /dynamicpath/bin/monitor -h upf2:8888 -eth1 rx=200,tx=200 &
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf2cfg.yaml
         "
     privileged: true
@@ -60,9 +61,11 @@ services:
       - "8805"
       - "8888"
     networks:
-      privnet:
+      1_cpnet:
         ipv4_address: 10.200.200.102
-      # servicenet:
+      2_upnet:
+        ipv4_address: 10.200.201.102
+      # 3_servicenet:
       #   ipv4_address: 60.60.1.102
 
   db:
@@ -72,7 +75,7 @@ services:
     expose:
       - "27017"
     networks:
-      privnet:
+      1_cpnet:
         ipv4_address: 10.200.200.1
 
   free5gc-nrf:
@@ -92,7 +95,7 @@ services:
     environment:
       DB_URI: mongodb://db/free5gc
     networks:
-      privnet:
+      1_cpnet:
         ipv4_address: 10.200.200.2
     depends_on:
       - db
@@ -112,7 +115,7 @@ services:
       - "./gofree5gc:/gofree5gc"
       - "./config:/gofree5gc/config"
     networks:
-      privnet:
+      1_cpnet:
         ipv4_address: 10.200.200.3
     depends_on:
       - free5gc-nrf
@@ -132,7 +135,7 @@ services:
       - "./gofree5gc:/gofree5gc"
       - "./config:/gofree5gc/config"
     networks:
-      privnet:
+      1_cpnet:
         ipv4_address: 10.200.200.4
     depends_on:
       - free5gc-nrf
@@ -152,7 +155,7 @@ services:
       - "./gofree5gc:/gofree5gc"
       - "./config:/gofree5gc/config"
     networks:
-      privnet:
+      1_cpnet:
         ipv4_address: 10.200.200.5
     depends_on:
       - free5gc-nrf
@@ -172,7 +175,7 @@ services:
       - "./gofree5gc:/gofree5gc"
       - "./config:/gofree5gc/config"
     networks:
-      privnet:
+      1_cpnet:
         ipv4_address: 10.200.200.6
     depends_on:
       - free5gc-nrf
@@ -194,7 +197,7 @@ services:
       - "./gofree5gc:/gofree5gc"
       - "./config:/config"
     networks:
-      privnet:
+      1_cpnet:
         ipv4_address: 10.200.200.7
     depends_on:
       - free5gc-nrf
@@ -215,7 +218,7 @@ services:
       - "./gofree5gc:/gofree5gc"
       - "./config:/gofree5gc/config"
     networks:
-      privnet:
+      1_cpnet:
         ipv4_address: 10.200.200.8
     depends_on:
       - free5gc-nrf
@@ -237,7 +240,7 @@ services:
     environment:
       DB_URI: mongodb://db/free5gc
     networks:
-      privnet:
+      1_cpnet:
         ipv4_address: 10.200.200.9
     depends_on:
       - db
@@ -259,7 +262,7 @@ services:
     expose:
       - "9487"
     networks:
-      privnet:
+      1_cpnet:
         ipv4_address: 10.200.200.10
     depends_on:
       - free5gc-upf1
@@ -283,9 +286,15 @@ services:
       - NET_ADMIN
     devices:
       - "/dev/net/tun:/dev/net/tun"
+    expose:
+      - "8088"
+      - "2152"
+      - "9999"
     networks:
-      privnet:
+      1_cpnet:
         ipv4_address: 10.200.200.100
+      2_upnet:
+        ipv4_address: 10.200.201.100
     depends_on:
       - free5gc-amf
     # tty: true
@@ -297,18 +306,24 @@ services:
         #expose:
         #- "5201"
         #networks:
-        #servicenet:
+        #3_servicenet:
         #ipv4_address: 60.60.1.1
         #tty: true
 
 networks:
-  privnet:
+  1_cpnet:
     driver: bridge
     ipam:
       config:
         - subnet: 10.200.200.0/24
           gateway: 10.200.200.254
-  servicenet:
+  2_upnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.200.201.0/24
+          gateway: 10.200.201.254
+  3_servicenet:
     driver: bridge
     ipam:
       config:

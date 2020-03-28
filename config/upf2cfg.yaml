@@ -10,7 +10,7 @@ configuration:
     - addr: 10.200.200.102
 
   gtpu:
-    - addr: 10.200.200.102
+    - addr: 10.200.201.102
     # [optional] gtpu.name
     # - name: upf.5gc.nctu.me
     # [optional] gtpu.ifname
