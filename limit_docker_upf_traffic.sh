@@ -25,8 +25,8 @@ function add_tc {
     for index in ${!UPF_RX_LIST[@]}; do
         # Limit TX
         exe docker exec -it ${UPF_NAME_LIST[$index]} /bin/bash -c "
-        tc qdisc add dev eth0 root handle 1: tbf rate ${UPF_TX_LIST[$index]}mbit burst 1540 limit 3000 
-        tc qdisc add dev eth0 parent 1:1 handle 10: netem delay ${UPF_DELAY_LIST[$index]} loss ${UPF_LOSS_LIST[$index]}
+        tc qdisc add dev eth1 root handle 1: tbf rate ${UPF_TX_LIST[$index]}mbit burst 1540 limit 3000 
+        tc qdisc add dev eth1 parent 1:1 handle 10: netem delay ${UPF_DELAY_LIST[$index]} loss ${UPF_LOSS_LIST[$index]}
         "
         # Limit RX
         exe sudo tc qdisc add dev ${UPF_VETH_LIST[$index]} root handle 1: tbf rate ${UPF_RX_LIST[$index]}mbit burst 1540 limit 3000
