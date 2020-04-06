@@ -17,6 +17,6 @@ line_num=($(grep -n "/dynamicpath/bin/monitor -h" docker-compose.yaml | head -n 
 
 echo "Modify docker-compose.yaml for tc rule"
 for index in ${!UPF_TX_LIST[@]}; do
-    replace="        \/dynamicpath\/bin\/monitor -h upf$(($index+1)):8888 -eth1 rx=${UPF_RX_LIST[$index]},tx=${UPF_TX_LIST[$index]} \&"
+    replace="        \/dynamicpath\/bin\/monitor -h upf$(($index+1)):8888 -eth1 rx=${UPF_RX_LIST[$index]},tx=${UPF_TX_LIST[$index]} "
     sed -i "${line_num[$index]}s/.*/$replace/" docker-compose.yaml
 done

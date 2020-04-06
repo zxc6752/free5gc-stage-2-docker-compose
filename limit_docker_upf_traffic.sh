@@ -14,7 +14,7 @@ function remove_tc {
 	echo "Unlimit traffic on UPFs" 
         for index in ${!UPF_RX_LIST[@]}; do
             # Unlimit TX
-            exe docker exec -it ${UPF_NAME_LIST[$index]} tc qdisc del root dev eth0
+            exe docker exec -it ${UPF_NAME_LIST[$index]} tc qdisc del root dev eth1
             # Unlimit RX
             exe sudo tc qdisc del root dev ${UPF_VETH_LIST[$index]}
         done
@@ -36,7 +36,7 @@ function init_upf {
     for index in ${!UPF_RX_LIST[@]}; do
         container_name="upf$(($index+1))"
         UPF_NAME_LIST+=($container_name)
-        num=$(docker exec -it $container_name cat /sys/class/net/eth0/iflink)
+        num=$(docker exec -it $container_name cat /sys/class/net/eth1/iflink)
         num=${num:0:$(( ${#num} - 1 ))}
         INTERFACE=$( ip a | grep $num | grep -Po '(?<=(: )).*(?=@)' )
         UPF_VETH_LIST+=($INTERFACE)
@@ -68,4 +68,3 @@ if [ -z $REMOVE ]; then
      echo "Limit traffic on UPFs" 
      add_tc
 fi
-

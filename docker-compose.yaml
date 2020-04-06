@@ -9,10 +9,12 @@ services:
     command: | 
         /bin/bash -c "
         ip route change default via 60.60.1.254 dev eth2
-        # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
         iptables -t nat -I POSTROUTING -o eth2 -j MASQUERADE
-        /dynamicpath/bin/monitor -h upf1:8888 -eth1 rx=100,tx=100 &
-        /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf1cfg.yaml
+        # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
+        /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf1cfg.yaml &
+        sleep 0.05
+        ip link set dev upfgtp0 mtu 1500
+        /dynamicpath/bin/monitor -h upf1:8888 -eth1 rx=100,tx=100 
         "
     privileged: true
     volumes:
@@ -43,8 +45,10 @@ services:
     command: | 
         /bin/bash -c "
         # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
-        /dynamicpath/bin/monitor -h upf2:8888 -eth1 rx=200,tx=200 &
-        /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf2cfg.yaml
+        /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf2cfg.yaml &
+        sleep 0.05
+        ip link set dev upfgtp0 mtu 1500
+        /dynamicpath/bin/monitor -h upf2:8888 -eth1 rx=200,tx=200 
         "
     privileged: true
     volumes:
@@ -187,7 +191,7 @@ services:
     container_name: smf
     command: |
       /bin/bash -c "
-      sleep 0.1
+      sleep 0.2
       ./bin/smf -smfcfg /config/smfcfg.conf
       "
     expose:
@@ -254,6 +258,7 @@ services:
     container_name: balancer
     command: | 
         /bin/bash -c "
+        sleep 0.1
         /dynamicpath/bin/balancer -lbcfg /config/lbcfg.conf
         "
     volumes:
@@ -275,7 +280,7 @@ services:
     container_name: simulator
     command: | 
        /bin/bash -c "
-       #cd /radio_simulator/lib/linux_kernel_gtp/libgtp5gnl && autoreconf -iv && ./configure --prefix=`pwd` && make -j`nproc`
+       # cd /radio_simulator/lib/linux_kernel_gtp/libgtp5gnl && autoreconf -iv && ./configure --prefix=`pwd` && make -j`nproc`
        cd /radio_simulator && ./run.sh 60.60.2.0/24
        "
     privileged: true
