@@ -11,7 +11,7 @@ fi
 
 docker-compose up &
 PID=$!
-sleep 4
+sleep 2
 sudo ./limit_docker_upf_traffic.sh
 
 function terminate()

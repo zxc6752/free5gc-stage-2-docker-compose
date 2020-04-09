@@ -2,10 +2,10 @@
 
 exe() { echo "\$ $@" ; "$@" ; }
 
-UPF_TX_LIST=(100 200)
-UPF_RX_LIST=(100 200)
-UPF_DELAY_LIST=(1ms 3ms) 
-UPF_LOSS_LIST=(5% 10%)
+UPF_TX_LIST=(200 600 400 600 400 500 300 500 400 100)
+UPF_RX_LIST=(200 600 400 600 400 500 300 500 400 100)
+UPF_DELAY_LIST=(1ms 3ms 4ms 2ms 5ms 1ms 2ms 3ms 4ms 2ms) 
+UPF_LOSS_LIST=(5% 5% 0% 10% 3% 6% 2% 4% 7% 0%)
 UPF_VETH_LIST=()
 UPF_NAME_LIST=()
 
@@ -14,7 +14,7 @@ function remove_tc {
 	echo "Unlimit traffic on UPFs" 
         for index in ${!UPF_RX_LIST[@]}; do
             # Unlimit TX
-            exe docker exec -it ${UPF_NAME_LIST[$index]} tc qdisc del root dev eth1
+            exe docker exec -it ${UPF_NAME_LIST[$index]} /bin/bash -c "tc qdisc del root dev eth1"
             # Unlimit RX
             exe sudo tc qdisc del root dev ${UPF_VETH_LIST[$index]}
         done
@@ -25,11 +25,12 @@ function add_tc {
     for index in ${!UPF_RX_LIST[@]}; do
         # Limit TX
         exe docker exec -it ${UPF_NAME_LIST[$index]} /bin/bash -c "
-        tc qdisc add dev eth1 root handle 1: tbf rate ${UPF_TX_LIST[$index]}mbit burst 1540 limit 3000 
+        tc qdisc add dev eth1 root handle 1: tbf rate ${UPF_TX_LIST[$index]}mbit burst 1540 latency 50ms
         tc qdisc add dev eth1 parent 1:1 handle 10: netem delay ${UPF_DELAY_LIST[$index]} loss ${UPF_LOSS_LIST[$index]}
+        # tc qdisc add dev eth1 parent 1:1 handle 10: netem delay ${UPF_DELAY_LIST[$index]} 
         "
         # Limit RX
-        exe sudo tc qdisc add dev ${UPF_VETH_LIST[$index]} root handle 1: tbf rate ${UPF_RX_LIST[$index]}mbit burst 1540 limit 3000
+        exe sudo tc qdisc add dev ${UPF_VETH_LIST[$index]} root handle 1: tbf rate ${UPF_RX_LIST[$index]}mbit burst 1540 latency 50ms
     done
 }
 function init_upf {

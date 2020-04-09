@@ -8,13 +8,12 @@ services:
     container_name: upf1
     command: | 
         /bin/bash -c "
-        ip route change default via 60.60.1.254 dev eth2
-        iptables -t nat -I POSTROUTING -o eth2 -j MASQUERADE
+        sysctl fs.mqueue.msg_default=5
         # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf1cfg.yaml &
         sleep 0.05
-        ip link set dev upfgtp0 mtu 1500
-        /dynamicpath/bin/monitor -h upf1:8888 -eth1 rx=100,tx=100 
+        ip link set dev upfgtp0 mtu 65535
+        /dynamicpath/bin/monitor -h upf1:8888 -eth1 rx=200,tx=200 
         "
     privileged: true
     volumes:
@@ -35,8 +34,7 @@ services:
         ipv4_address: 10.200.200.101
       2_upnet:
         ipv4_address: 10.200.201.101
-      3_servicenet:
-        ipv4_address: 60.60.1.101
+
   free5gc-upf2:
     build:
       context: .
@@ -44,11 +42,12 @@ services:
     container_name: upf2
     command: | 
         /bin/bash -c "
+        sysctl fs.mqueue.msg_default=5
         # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf2cfg.yaml &
         sleep 0.05
-        ip link set dev upfgtp0 mtu 1500
-        /dynamicpath/bin/monitor -h upf2:8888 -eth1 rx=200,tx=200 
+        ip link set dev upfgtp0 mtu 65535
+        /dynamicpath/bin/monitor -h upf2:8888 -eth1 rx=600,tx=600 
         "
     privileged: true
     volumes:
@@ -69,8 +68,290 @@ services:
         ipv4_address: 10.200.200.102
       2_upnet:
         ipv4_address: 10.200.201.102
-      # 3_servicenet:
-      #   ipv4_address: 60.60.1.102
+
+  free5gc-upf3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: upf3
+    command: | 
+        /bin/bash -c "
+        sysctl fs.mqueue.msg_default=5
+        # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
+        /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf3cfg.yaml &
+        sleep 0.05
+        ip link set dev upfgtp0 mtu 65535
+        /dynamicpath/bin/monitor -h upf3:8888 -eth1 rx=400,tx=400 
+        "
+    privileged: true
+    volumes:
+      - "./gofree5gc:/gofree5gc"
+      - "./config:/config"
+      - "./dynamicpath:/dynamicpath"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
+    expose:
+      - "2152"
+      - "8805"
+      - "8888"
+    networks:
+      1_cpnet:
+        ipv4_address: 10.200.200.103
+      2_upnet:
+        ipv4_address: 10.200.201.103
+
+  free5gc-upf4:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: upf4
+    command: | 
+        /bin/bash -c "
+        sysctl fs.mqueue.msg_default=5
+        # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
+        /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf4cfg.yaml &
+        sleep 0.05
+        ip link set dev upfgtp0 mtu 65535
+        /dynamicpath/bin/monitor -h upf4:8888 -eth1 rx=600,tx=600 
+        "
+    privileged: true
+    volumes:
+      - "./gofree5gc:/gofree5gc"
+      - "./config:/config"
+      - "./dynamicpath:/dynamicpath"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
+    expose:
+      - "2152"
+      - "8805"
+      - "8888"
+    networks:
+      1_cpnet:
+        ipv4_address: 10.200.200.104
+      2_upnet:
+        ipv4_address: 10.200.201.104
+
+  free5gc-upf5:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: upf5
+    command: | 
+        /bin/bash -c "
+        sysctl fs.mqueue.msg_default=5
+        # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
+        /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf5cfg.yaml &
+        sleep 0.05
+        ip link set dev upfgtp0 mtu 65535
+        /dynamicpath/bin/monitor -h upf5:8888 -eth1 rx=400,tx=400 
+        "
+    privileged: true
+    volumes:
+      - "./gofree5gc:/gofree5gc"
+      - "./config:/config"
+      - "./dynamicpath:/dynamicpath"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
+    expose:
+      - "2152"
+      - "8805"
+      - "8888"
+    networks:
+      1_cpnet:
+        ipv4_address: 10.200.200.105
+      2_upnet:
+        ipv4_address: 10.200.201.105
+
+  free5gc-upf6:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: upf6
+    command: | 
+        /bin/bash -c "
+        sysctl fs.mqueue.msg_default=5
+        # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
+        /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf6cfg.yaml &
+        sleep 0.05
+        ip link set dev upfgtp0 mtu 65535
+        /dynamicpath/bin/monitor -h upf6:8888 -eth1 rx=500,tx=500 
+        "
+    privileged: true
+    volumes:
+      - "./gofree5gc:/gofree5gc"
+      - "./config:/config"
+      - "./dynamicpath:/dynamicpath"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
+    expose:
+      - "2152"
+      - "8805"
+      - "8888"
+    networks:
+      1_cpnet:
+        ipv4_address: 10.200.200.106
+      2_upnet:
+        ipv4_address: 10.200.201.106
+
+  free5gc-upf7:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: upf7
+    command: | 
+        /bin/bash -c "
+        sysctl fs.mqueue.msg_default=5
+        # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
+        /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf7cfg.yaml &
+        sleep 0.05
+        ip link set dev upfgtp0 mtu 65535
+        /dynamicpath/bin/monitor -h upf7:8888 -eth1 rx=300,tx=300 
+        "
+    privileged: true
+    volumes:
+      - "./gofree5gc:/gofree5gc"
+      - "./config:/config"
+      - "./dynamicpath:/dynamicpath"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
+    expose:
+      - "2152"
+      - "8805"
+      - "8888"
+    networks:
+      1_cpnet:
+        ipv4_address: 10.200.200.107
+      2_upnet:
+        ipv4_address: 10.200.201.107
+
+  free5gc-upf8:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: upf8
+    command: | 
+        /bin/bash -c "
+        ip route change default via 60.60.1.254 dev eth2
+        iptables -t nat -I POSTROUTING -o eth2 -j MASQUERADE
+        sysctl fs.mqueue.msg_default=5
+        # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
+        /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf8cfg.yaml &
+        sleep 0.05
+        ip link set dev upfgtp0 mtu 65535
+        /dynamicpath/bin/monitor -h upf8:8888 -eth1 rx=500,tx=500 -eth2 rx=500,tx=500 
+        "
+    privileged: true
+    volumes:
+      - "./gofree5gc:/gofree5gc"
+      - "./config:/config"
+      - "./dynamicpath:/dynamicpath"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
+    expose:
+      - "2152"
+      - "8805"
+      - "8888"
+    networks:
+      1_cpnet:
+        ipv4_address: 10.200.200.108
+      2_upnet:
+        ipv4_address: 10.200.201.108
+      3_servicenet:
+        ipv4_address: 60.60.1.108
+
+  free5gc-upf9:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: upf9
+    command: | 
+        /bin/bash -c "
+        ip route change default via 60.60.1.254 dev eth2
+        iptables -t nat -I POSTROUTING -o eth2 -j MASQUERADE
+        sysctl fs.mqueue.msg_default=5
+        # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
+        /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf9cfg.yaml &
+        sleep 0.05
+        ip link set dev upfgtp0 mtu 65535
+        /dynamicpath/bin/monitor -h upf9:8888 -eth1 rx=400,tx=400 -eth2 rx=400,tx=400 
+        "
+    privileged: true
+    volumes:
+      - "./gofree5gc:/gofree5gc"
+      - "./config:/config"
+      - "./dynamicpath:/dynamicpath"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
+    expose:
+      - "2152"
+      - "8805"
+      - "8888"
+    networks:
+      1_cpnet:
+        ipv4_address: 10.200.200.109
+      2_upnet:
+        ipv4_address: 10.200.201.109
+      3_servicenet:
+        ipv4_address: 60.60.1.109
+
+  free5gc-upf10:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: upf10
+    command: | 
+        /bin/bash -c "
+        ip route change default via 60.60.1.254 dev eth2
+        iptables -t nat -I POSTROUTING -o eth2 -j MASQUERADE
+        sysctl fs.mqueue.msg_default=5
+        # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
+        /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf10cfg.yaml &
+        sleep 0.05
+        ip link set dev upfgtp0 mtu 65535
+        /dynamicpath/bin/monitor -h upf10:8888 -eth1 rx=100,tx=100 -eth2 rx=100,tx=100 
+        "
+    privileged: true
+    volumes:
+      - "./gofree5gc:/gofree5gc"
+      - "./config:/config"
+      - "./dynamicpath:/dynamicpath"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
+    expose:
+      - "2152"
+      - "8805"
+      - "8888"
+    networks:
+      1_cpnet:
+        ipv4_address: 10.200.200.110
+      2_upnet:
+        ipv4_address: 10.200.201.110
+      3_servicenet:
+        ipv4_address: 60.60.1.110
 
   db:
     image: mongo
@@ -183,6 +464,7 @@ services:
         ipv4_address: 10.200.200.6
     depends_on:
       - free5gc-nrf
+      - free5gc-amf
 
   free5gc-smf:
     build:
@@ -192,7 +474,7 @@ services:
     command: |
       /bin/bash -c "
       sleep 0.2
-      ./bin/smf -smfcfg /config/smfcfg.conf
+      ./bin/smf -smfcfg /config/smfcfg.test.conf
       "
     expose:
       - "38413"
@@ -259,7 +541,7 @@ services:
     command: | 
         /bin/bash -c "
         sleep 0.1
-        /dynamicpath/bin/balancer -lbcfg /config/lbcfg.conf
+        /dynamicpath/bin/balancer -lbcfg /config/lbcfg_test1.conf
         "
     volumes:
       - "./config_balancer:/config"
@@ -272,6 +554,15 @@ services:
     depends_on:
       - free5gc-upf1
       - free5gc-upf2
+      - free5gc-upf3
+      - free5gc-upf4
+      - free5gc-upf5
+      - free5gc-upf6
+      - free5gc-upf7
+      - free5gc-upf8
+      - free5gc-upf9
+      - free5gc-upf10
+      - radio-simulator
 
   radio-simulator:
     build:
@@ -324,12 +615,16 @@ networks:
           gateway: 10.200.200.254
   2_upnet:
     driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 65535
     ipam:
       config:
         - subnet: 10.200.201.0/24
           gateway: 10.200.201.254
   3_servicenet:
     driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 65535
     ipam:
       config:
         - subnet: 60.60.1.0/24
