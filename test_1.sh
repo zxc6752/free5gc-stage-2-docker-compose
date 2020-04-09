@@ -30,18 +30,22 @@ send_msg "reg" 4
 read -r msg_in <&4
 echo "$msg_in"
 
-iperf -s -u -B ${ServiceIp} -p $ServicePort -i 1 -x M -l 1400 > iperf_server.txt &
-SERVER_PID=$!
+mkdir iper_log
+
+# iperf -s -u -B ${ServiceIp} -p $ServicePort -i 1 -x M -l 14000 > ./iper_log/iperf_server.txt &
+# SERVER_PID=$!
+SERVER_PID=()
 
 sleep 1
 
 PID_LIST=()
 
 for index in ${!ID[@]}; do
-    # port=500$index
+    port=500$index
+    iperf -s -u -B ${ServiceIp} -p $port -i 1 -x M -l 14000 > ./iper_log/iperf_server_${ID[$index]}.txt &
     # iperf -s -u -B ${ServiceIp} -p $port -i 1 -x M > iperf_server_${ID[$index]}.txt &
-    # SERVER_PID+=($!)
-    exe $EXE_FILE $HOST $PORT $SUPI ${ID[$index]} ${TIME[$index]} $ServiceIp $ServicePort -k -b=$BANDWIDTH &
+    SERVER_PID+=($!)
+    exe $EXE_FILE $HOST $PORT $SUPI ${ID[$index]} ${TIME[$index]} $ServiceIp $port -k -b=$BANDWIDTH &
     PID_LIST+=($!)
     sleep 1.5
 done
@@ -59,6 +63,7 @@ echo ${msg_in}
 
 exec 4<&-
 
-kill -9 $SERVER_PID
+kill -9 ${SERVER_PID[@]}
+# kill -9 $SERVER_PID
 
 echo exited

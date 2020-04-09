@@ -473,7 +473,7 @@ services:
     container_name: smf
     command: |
       /bin/bash -c "
-      sleep 0.2
+      sleep 0.5
       ./bin/smf -smfcfg /config/smfcfg.test.conf
       "
     expose:
@@ -540,7 +540,7 @@ services:
     container_name: balancer
     command: | 
         /bin/bash -c "
-        sleep 0.1
+        sleep 0.3
         /dynamicpath/bin/balancer -lbcfg /config/lbcfg_test1.conf
         "
     volumes:
