@@ -605,6 +605,39 @@ services:
         #3_servicenet:
         #ipv4_address: 60.60.1.1
         #tty: true
+  ue-simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile_UE
+    container_name: ue
+    command: | 
+       /bin/bash -c "
+       cd /radio_simulator && ./ue_run.sh 60.60.2.0/24
+       "
+    privileged: true
+    volumes:
+      - "./radio_simulator:/radio_simulator"
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
+    expose:
+      - "2152"
+    networks:
+      2_upnet:
+        ipv4_address: 10.200.201.99
+    # tty: true
+        #service-iperf3:
+        #build:
+        #context: .
+        #dockerfile: Dockerfile_service
+        #container_name: iperf3
+        #expose:
+        #- "5201"
+        #networks:
+        #3_servicenet:
+        #ipv4_address: 60.60.1.1
+        #tty: true
 
 networks:
   1_cpnet:
