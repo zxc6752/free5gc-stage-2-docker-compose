@@ -42,7 +42,7 @@ PID_LIST=()
 
 for index in ${!ID[@]}; do
     port=500$index
-    iperf -s -u -B ${ServiceIp} -p $port -i 1 -x M -l 14000 > ./iper_log/iperf_server_${ID[$index]}.txt &
+    iperf -s -u -B ${ServiceIp} -p $port -i 1 -x M -l 14000 > ./iperf_log/iperf_server_${ID[$index]}.txt &
     # iperf -s -u -B ${ServiceIp} -p $port -i 1 -x M > iperf_server_${ID[$index]}.txt &
     SERVER_PID+=($!)
     exe $EXE_FILE $HOST $PORT $SUPI ${ID[$index]} ${TIME[$index]} $ServiceIp $port -k -b=$BANDWIDTH &
