@@ -13,6 +13,9 @@ ServiceIp=60.60.2.1
 ServicePort=5001
 BANDWIDTH=50m
 
+if [ -n "$1" ];then
+    postfix=$1
+fi
 
 send_msg() { 
     echo "\$ $1" 
@@ -30,7 +33,7 @@ send_msg "reg" 4
 read -r msg_in <&4
 echo "$msg_in"
 
-mkdir iper_log
+mkdir iperf_log
 
 # iperf -s -u -B ${ServiceIp} -p $ServicePort -i 1 -x M -l 14000 > ./iper_log/iperf_server.txt &
 # SERVER_PID=$!
@@ -42,7 +45,7 @@ PID_LIST=()
 
 for index in ${!ID[@]}; do
     port=500$index
-    iperf -s -u -B ${ServiceIp} -p $port -i 1 -x M -l 14000 > ./iperf_log/iperf_server_${ID[$index]}.txt &
+    iperf -s -u -B ${ServiceIp} -p $port -i 1 -x M -l 14000 > ./iperf_log/iperf_server${postfix}_${ID[$index]}.txt &
     # iperf -s -u -B ${ServiceIp} -p $port -i 1 -x M > iperf_server_${ID[$index]}.txt &
     SERVER_PID+=($!)
     exe $EXE_FILE $HOST $PORT $SUPI ${ID[$index]} ${TIME[$index]} $ServiceIp $port -k -b=$BANDWIDTH &

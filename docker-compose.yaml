@@ -578,6 +578,7 @@ services:
     volumes:
       - "./radio_simulator:/radio_simulator"
       - "./config_radio:/radio_simulator/config"
+      - "./ping_log:/ping_log"
     cap_add:
       - NET_ADMIN
     devices:
