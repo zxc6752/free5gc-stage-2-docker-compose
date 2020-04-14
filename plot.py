@@ -71,6 +71,8 @@ def get_ave_info_from_iperf(types):
         prefix = "iperf_log/iperf_server_rr_"
     elif types == 2:
         prefix = "iperf_log/iperf_server_sp_"
+    elif types == 3:
+        prefix = "iperf_log/iperf_server_dp_"
     else :
         prefix = "iperf_log/iperf_server_"
 
@@ -103,6 +105,8 @@ def get_ave_info_from_ping(types):
         prefix = "ping_log/ping_rr_"
     elif types == 2:
         prefix = "ping_log/ping_sp_"
+    elif types == 3:
+        prefix = "ping_log/ping_dp_"
     else :
         prefix = "ping_log/ping_"
 
@@ -135,11 +139,13 @@ output_file[3] = folder + choose_string(sys.stdin.readline().strip('\n'), output
 #     plt.plot(xaxis, file_loss_list[i][:len(file_loss_list[i])-1], label = str(i))
 ave_loss_rate_lb, throughput_lb = get_ave_info_from_iperf(0)
 ave_loss_rate_rr, throughput_rr = get_ave_info_from_iperf(1)
-ave_loss_rate_sp, throughput_sp = get_ave_info_from_iperf(2)
+# ave_loss_rate_sp, throughput_sp = get_ave_info_from_iperf(2)
+ave_loss_rate_dp, throughput_dp = get_ave_info_from_iperf(3)
 
 plt.plot(ave_loss_rate_lb, label = "RIRM")
 plt.plot(ave_loss_rate_rr, label = "Round-Robin")
-plt.plot(ave_loss_rate_sp, label = "Shortest Path")
+# plt.plot(ave_loss_rate_sp, label = "Shortest Path")
+plt.plot(ave_loss_rate_dp, label = "Dynamic Path")
 plt.ylim((0.0,100.0))
 plt.yticks(np.arange(0.0, 100.0, 5.0))
 plt.xlabel('time(Sec)')
@@ -150,7 +156,8 @@ plt.close()
 
 plt.plot(throughput_lb, label = "RIRM")
 plt.plot(throughput_rr, label = "Round-Robin")
-plt.plot(throughput_sp, label = "Shortest Path")
+# plt.plot(throughput_sp, label = "Shortest Path")
+plt.plot(throughput_dp, label = "Dynamic Path")
 plt.ylim((0.0,1000.0))
 plt.yticks(np.arange(0.0, 1000.0, 50.0))
 plt.xlabel('time(Sec)')
@@ -161,16 +168,19 @@ plt.close()
 
 lat_lb = get_ave_info_from_ping(0)
 lat_rr = get_ave_info_from_ping(1)
-lat_sp = get_ave_info_from_ping(2)
+# lat_sp = get_ave_info_from_ping(2)
+lat_dp = get_ave_info_from_ping(3)
 
 width = 0.3
 x1 = range(1,17)
 
 plt.bar([i-width for i in x1], lat_lb, width=width,label = "RIRM")
 plt.bar([i for i in x1], lat_rr, width=width,label = "Round-Robin")
-plt.bar([i+width for i in x1], lat_sp, width=width,label = "Shortest Path")
-plt.ylim((0.0,50.0))
-plt.yticks(np.arange(0.0, 50.0, 2.0))
+plt.bar([i+width for i in x1], lat_dp, width=width,label = "Dynamic Path")
+# plt.bar([i-width/2*3 for i in x1], lat_lb, width=width,label = "RIRM")
+# plt.bar([i-width/2 for i in x1], lat_rr, width=width,label = "Round-Robin")
+# plt.bar([i+width/2 for i in x1], lat_sp, width=width,label = "Shortest Path")
+# plt.bar([i+width/2*3 for i in x1], lat_dp, width=width,label = "Dynamic Path")
 plt.ylim((0.0, 900.0))
 plt.yticks(np.arange(0.0, 900.0, 50.0))
 plt.xticks(x1)
@@ -185,11 +195,11 @@ plt.close()
 # print "loss:", Average(ave_loss_rate_lb), Average(ave_loss_rate_rr), Average(ave_loss_rate_sp)
 # print "throughput:", Average(throughput_lb), Average(throughput_rr), Average(throughput_sp)
 # print "latency:", Average(lat_lb), Average(lat_rr), Average(lat_sp)
-ave_loss = ["Loss(%)",Average(ave_loss_rate_lb), Average(ave_loss_rate_rr), Average(ave_loss_rate_sp)]
-ave_throughput = ["Throughput(Mbps)",Average(throughput_lb), Average(throughput_rr), Average(throughput_sp)]
-ave_lat = ["Latency(ms)",Average(lat_lb), Average(lat_rr), Average(lat_sp)]
+ave_loss = ["Loss(%)",Average(ave_loss_rate_lb), Average(ave_loss_rate_rr), Average(ave_loss_rate_dp)]
+ave_throughput = ["Throughput(Mbps)",Average(throughput_lb), Average(throughput_rr), Average(throughput_dp)]
+ave_lat = ["Latency(ms)",Average(lat_lb), Average(lat_rr), Average(lat_dp)]
 df=pd.DataFrame(np.array([ave_loss, ave_throughput, ave_lat]),
-                columns= ["","RIRM", "Round-Robin", "Shortest Path"])
+                columns= ["","RIRM", "Round-Robin", "Dynamic Path"])
 
 render_mpl_table(df, header_columns=1, col_width=3.0)
 
