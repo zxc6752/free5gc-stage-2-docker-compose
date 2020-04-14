@@ -37,14 +37,14 @@ def Average(lst):
     return round(sum(lst) / len(lst), 3)
 
 def parse_ping(s):
-    mo = re.match ("rtt min/avg/max/mdev = (\d+\.?\d*)/.*", s)
+    mo = re.match ("rtt min/avg/max/mdev = (\d+\.?\d*)/(\d+\.?\d*)/.*", s)
     if mo: return mo.groups ()
 
 def get_lat_in_lines(lines):
     for line in lines: 
         lat = parse_ping(line.strip())
         if lat != None :
-            return float(lat[0])
+            return float(lat[1])
     return 0.0
 
 def parse(s):
@@ -113,15 +113,21 @@ def get_ave_info_from_ping(types):
         latency.append(lat)
     return latency
 
-print 'Please input output loss file name:'
-output_loss_file = sys.stdin.readline().strip('\n')
-print 'Please input output throughput file name:'
-output_throughput_file = sys.stdin.readline().strip('\n')
-print 'Please input output latency file name:'
-output_lat_file = sys.stdin.readline().strip('\n')
-print 'Please input output summary file name:'
-output_sum_file = sys.stdin.readline().strip('\n')
+def choose_string(s1, s2):
+    if s1 == "":
+        return s2
+    return s1
 
+output_file = ["loss.png", "throughput.png", "lat.png", "table.png"]
+folder = "chart/"
+print 'Please input output loss file name(default -> loss.png):'
+output_file[0] = folder + choose_string(sys.stdin.readline().strip('\n'), output_file[0])
+print 'Please input output throughput file name(default -> throughput.png):'
+output_file[1] = folder + choose_string(sys.stdin.readline().strip('\n'), output_file[1])
+print 'Please input output latency file name(default -> lat.png):'
+output_file[2] = folder + choose_string(sys.stdin.readline().strip('\n'), output_file[2])
+print 'Please input output summary file name(default -> table.png):'
+output_file[3] = folder + choose_string(sys.stdin.readline().strip('\n'), output_file[3])
 
 # for i in range(0,16):
 #     start_time = 1.5 * i
@@ -139,7 +145,7 @@ plt.yticks(np.arange(0.0, 100.0, 5.0))
 plt.xlabel('time(Sec)')
 plt.ylabel('loss rate(%)')
 plt.legend()
-plt.savefig(output_loss_file)
+plt.savefig(output_file[0])
 plt.close()
 
 plt.plot(throughput_lb, label = "RIRM")
@@ -150,7 +156,7 @@ plt.yticks(np.arange(0.0, 1000.0, 50.0))
 plt.xlabel('time(Sec)')
 plt.ylabel('throughput(Mbps)')
 plt.legend()
-plt.savefig(output_throughput_file)
+plt.savefig(output_file[1])
 plt.close()
 
 lat_lb = get_ave_info_from_ping(0)
@@ -165,11 +171,15 @@ plt.bar([i for i in x1], lat_rr, width=width,label = "Round-Robin")
 plt.bar([i+width for i in x1], lat_sp, width=width,label = "Shortest Path")
 plt.ylim((0.0,50.0))
 plt.yticks(np.arange(0.0, 50.0, 2.0))
+plt.ylim((0.0, 900.0))
+plt.yticks(np.arange(0.0, 900.0, 50.0))
 plt.xticks(x1)
 plt.xlabel('Session Id')
 plt.ylabel('latency(ms)')
+
+plt.gcf().set_size_inches(10,4.8)
 plt.legend()
-plt.savefig(output_lat_file)
+plt.savefig(output_file[2])
 plt.close()
 
 # print "loss:", Average(ave_loss_rate_lb), Average(ave_loss_rate_rr), Average(ave_loss_rate_sp)
@@ -183,5 +193,5 @@ df=pd.DataFrame(np.array([ave_loss, ave_throughput, ave_lat]),
 
 render_mpl_table(df, header_columns=1, col_width=3.0)
 
-plt.savefig(output_sum_file)
+plt.savefig(output_file[3])
 plt.close()
