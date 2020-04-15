@@ -353,6 +353,40 @@ services:
       3_servicenet:
         ipv4_address: 60.60.1.110
 
+  free5gc-upf11:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: upf11
+    command: | 
+        /bin/bash -c "
+        sysctl fs.mqueue.msg_default=5
+        # cd /gofree5gc/src/upf && rm -rf ./build && mkdir -p build && cd build && cmake .. && make -j8
+        /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf11cfg.yaml &
+        sleep 0.05
+        ip link set dev upfgtp0 mtu 65535
+        /dynamicpath/bin/monitor -h upf11:8888 -eth1 rx=10000,tx=10000 
+        "
+    privileged: true
+    volumes:
+      - "./gofree5gc:/gofree5gc"
+      - "./config:/config"
+      - "./dynamicpath:/dynamicpath"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
+    expose:
+      - "2152"
+      - "8805"
+      - "8888"
+    networks:
+      1_cpnet:
+        ipv4_address: 10.200.200.111
+      2_upnet:
+        ipv4_address: 10.200.201.111
+
   db:
     image: mongo
     container_name: mongodb
