@@ -13,7 +13,7 @@ services:
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf1cfg.yaml &
         sleep 0.05
         ip link set dev upfgtp0 mtu 65535
-        /dynamicpath/bin/monitor -h upf1:8888 -eth1 rx=200,tx=200 
+        /dynamicpath/bin/monitor -h upf1:8888 -eth1 rx=170,tx=170 
         "
     privileged: true
     volumes:
@@ -47,7 +47,7 @@ services:
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf2cfg.yaml &
         sleep 0.05
         ip link set dev upfgtp0 mtu 65535
-        /dynamicpath/bin/monitor -h upf2:8888 -eth1 rx=600,tx=600 
+        /dynamicpath/bin/monitor -h upf2:8888 -eth1 rx=570,tx=570 
         "
     privileged: true
     volumes:
@@ -81,7 +81,7 @@ services:
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf3cfg.yaml &
         sleep 0.05
         ip link set dev upfgtp0 mtu 65535
-        /dynamicpath/bin/monitor -h upf3:8888 -eth1 rx=400,tx=400 
+        /dynamicpath/bin/monitor -h upf3:8888 -eth1 rx=370,tx=370 
         "
     privileged: true
     volumes:
@@ -115,7 +115,7 @@ services:
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf4cfg.yaml &
         sleep 0.05
         ip link set dev upfgtp0 mtu 65535
-        /dynamicpath/bin/monitor -h upf4:8888 -eth1 rx=600,tx=600 
+        /dynamicpath/bin/monitor -h upf4:8888 -eth1 rx=570,tx=570 
         "
     privileged: true
     volumes:
@@ -149,7 +149,7 @@ services:
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf5cfg.yaml &
         sleep 0.05
         ip link set dev upfgtp0 mtu 65535
-        /dynamicpath/bin/monitor -h upf5:8888 -eth1 rx=400,tx=400 
+        /dynamicpath/bin/monitor -h upf5:8888 -eth1 rx=370,tx=370 
         "
     privileged: true
     volumes:
@@ -183,7 +183,7 @@ services:
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf6cfg.yaml &
         sleep 0.05
         ip link set dev upfgtp0 mtu 65535
-        /dynamicpath/bin/monitor -h upf6:8888 -eth1 rx=500,tx=500 
+        /dynamicpath/bin/monitor -h upf6:8888 -eth1 rx=470,tx=470 
         "
     privileged: true
     volumes:
@@ -217,7 +217,7 @@ services:
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf7cfg.yaml &
         sleep 0.05
         ip link set dev upfgtp0 mtu 65535
-        /dynamicpath/bin/monitor -h upf7:8888 -eth1 rx=300,tx=300 
+        /dynamicpath/bin/monitor -h upf7:8888 -eth1 rx=270,tx=270 
         "
     privileged: true
     volumes:
@@ -253,7 +253,7 @@ services:
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf8cfg.yaml &
         sleep 0.05
         ip link set dev upfgtp0 mtu 65535
-        /dynamicpath/bin/monitor -h upf8:8888 -eth1 rx=500,tx=500 -eth2 rx=500,tx=500 
+        /dynamicpath/bin/monitor -h upf8:8888 -eth1 rx=470,tx=470 -eth2 rx=500,tx=500 
         "
     privileged: true
     volumes:
@@ -291,7 +291,7 @@ services:
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf9cfg.yaml &
         sleep 0.05
         ip link set dev upfgtp0 mtu 65535
-        /dynamicpath/bin/monitor -h upf9:8888 -eth1 rx=400,tx=400 -eth2 rx=400,tx=400 
+        /dynamicpath/bin/monitor -h upf9:8888 -eth1 rx=370,tx=370 -eth2 rx=400,tx=400 
         "
     privileged: true
     volumes:
@@ -329,7 +329,7 @@ services:
         /gofree5gc/src/upf/build/bin/free5gc-upfd -f /config/upf10cfg.yaml &
         sleep 0.05
         ip link set dev upfgtp0 mtu 65535
-        /dynamicpath/bin/monitor -h upf10:8888 -eth1 rx=100,tx=100 -eth2 rx=100,tx=100 
+        /dynamicpath/bin/monitor -h upf10:8888 -eth1 rx=70,tx=70 -eth2 rx=100,tx=100 
         "
     privileged: true
     volumes:
@@ -605,7 +605,7 @@ services:
     container_name: simulator
     command: | 
        /bin/bash -c "
-       # cd /radio_simulator/lib/linux_kernel_gtp/libgtp5gnl && autoreconf -iv && ./configure --prefix=`pwd` && make -j`nproc`
+       # cd /radio_simulator/lib/libgtp5gnl && autoreconf -iv && ./configure --prefix=`pwd` && make -j`nproc`
        cd /radio_simulator && ./run.sh 60.60.2.0/24
        "
     privileged: true

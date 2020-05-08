@@ -5,7 +5,7 @@ exe() { echo "\$ $@" ; "$@" ; }
 UPF_TX_LIST=(200 600 400 600 400 500 300 500 400 100)
 UPF_RX_LIST=(200 600 400 600 400 500 300 500 400 100)
 UPF_DELAY_LIST=(1ms 3ms 4ms 2ms 5ms 1ms 2ms 3ms 4ms 2ms) 
-UPF_LOSS_LIST=(5% 5% 0% 10% 3% 6% 2% 4% 7% 0%)
+UPF_LOSS_LIST=(0.01% 0.05% 0% 0.01% 0.03% 0.06% 0.02% 0.04% 0.07% 0.04%)
 UPF_VETH_LIST=()
 UPF_NAME_LIST=()
 

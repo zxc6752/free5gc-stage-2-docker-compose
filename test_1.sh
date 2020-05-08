@@ -2,7 +2,7 @@
 
 exe() { echo "\$ $@" ; "$@" ; }
 
-EXE_FILE="./radio_simulator/ue_in_host.sh"
+EXE_FILE="./ue_in_host.sh"
 
 HOST=10.200.200.100
 PORT=9999
@@ -11,7 +11,7 @@ ID=(2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17)
 TIME=(40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40)
 ServiceIp=60.60.2.1
 ServicePort=5001
-BANDWIDTH=50m
+BANDWIDTH=40m
 
 if [ -n "$1" ];then
     postfix=$1
@@ -48,9 +48,9 @@ for index in ${!ID[@]}; do
     iperf -s -u -B ${ServiceIp} -p $port -i 1 -x M -l 14000 > ./iperf_log/iperf_server${postfix}_${ID[$index]}.txt &
     # iperf -s -u -B ${ServiceIp} -p $port -i 1 -x M > iperf_server_${ID[$index]}.txt &
     SERVER_PID+=($!)
-    exe $EXE_FILE $HOST $PORT $SUPI ${ID[$index]} ${TIME[$index]} $ServiceIp $port -k -b=$BANDWIDTH &
+    exe $EXE_FILE $HOST $PORT $SUPI ${ID[$index]} ${TIME[$index]} $ServiceIp $port -k -b=$BANDWIDTH -p=${postfix} &
     PID_LIST+=($!)
-    sleep 1.5
+    sleep 2
 done
 
 wait ${PID_LIST[@]}
